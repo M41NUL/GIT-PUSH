@@ -71,6 +71,8 @@ GIT-PUSH/
 ### Step 1 - Clone the repo
 
 ```bash
+apt update && apt upgrade -y
+pkg install git -y
 git clone https://github.com/M41NUL/GIT-PUSH.git
 cd GIT-PUSH
 ```
