@@ -28,22 +28,31 @@ echo ""
 echo -e "  ${O}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
 echo ""
 
-# ── Styled progress bar ───────────────────────────────────────────────────────
+# ── Shade block progress bar ──────────────────────────────────────────────────
 progress_bar() {
     local label="$1"
-    local total=35
-    local bar_width=28
+    local total=40
+    local bar_width=24
     for i in $(seq 1 $total); do
-        filled=$(( bar_width * i / total ))
-        arrow=""
-        for j in $(seq 1 $(( filled > 0 ? filled - 1 : 0 ))); do arrow="${arrow}="; done
-        [ $filled -gt 0 ] && arrow="${arrow}>"
-        empty=""
-        for j in $(seq 1 $(( bar_width - filled ))); do empty="${empty} "; done
-        pct=$(( 100 * i / total ))
-        if [ $pct -lt 40 ]; then bc="${R}"; elif [ $pct -lt 80 ]; then bc="${O}"; else bc="${G}"; fi
-        printf "\r  ${W}%-22s${RST}  ${bc}${B}[%-28s]${RST}  ${W}%3d%%${RST}" "$label" "${arrow}${empty}" "$pct"
-        sleep 0.04
+        local filled=$(( bar_width * i / total ))
+        local empty=$(( bar_width - filled ))
+
+        local bar=""
+        if [ $filled -gt 0 ]; then
+            [ $filled -gt 1 ] && bar=$(printf '%0.s▓' $(seq 1 $(( filled - 1 ))))
+            bar="${bar}▒"
+        fi
+        local emp=""
+        [ $empty -gt 0 ] && emp=$(printf '%0.s░' $(seq 1 $empty))
+
+        local pct=$(( 100 * i / total ))
+        if   [ $pct -lt 40 ]; then bc="${R}"
+        elif [ $pct -lt 80 ]; then bc="${O}"
+        else bc="${G}"; fi
+
+        printf "\r  ${W}%-22s${RST}  ${bc}${B}▕%s%s▏${RST}  ${W}%3d%%${RST}" \
+               "$label" "$bar" "$emp" "$pct"
+        sleep 0.03
     done
     echo ""
 }
